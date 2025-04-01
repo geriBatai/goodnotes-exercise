@@ -1,0 +1,20 @@
+name: Locust test run
+description: Performs locust test
+inputs:
+  endpoint:
+    description: endpoint to test
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        ENDPOINT: ${{ inputs.endpoint }}
+      run: |
+        summary_file=/tmp/summary-${ENDPOINT##*/}.txt
+
+        echo "Test results for ${ENDPOINT}" > ${summary_file}
+        echo "" >> ${summary_file}
+
+        locust --only-summary --headless -f load-test/test.py -H ${ENDPOINT} 2>&1 | tee -a ${summary_file}
