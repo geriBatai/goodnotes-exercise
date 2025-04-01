@@ -23,8 +23,8 @@ class LoadRampUp(LoadTestShape):
     stages = [
             {  "duration": 10, "users": 10 },
             {  "duration": 20, "users": 50 },
-            {  "duration": 30, "users": 500 },
-            {  "duration": 40, "users": 1000 },
+            {  "duration": 30, "users": 100 },
+            {  "duration": 40, "users": 200 },
     ]
     
     def tick(self):

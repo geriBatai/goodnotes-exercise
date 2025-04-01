@@ -9,6 +9,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: write
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,9 +72,10 @@ jobs:
         uses: ./.github/actions/locust-test
         with:
           endpoint: http://foo.local
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Locust test bar.local
         uses: ./.github/actions/locust-test
         with:
-          endpoint: http://foo.local
-
+          endpoint: http://bar.local
+          github_token: ${{ secrets.GITHUB_TOKEN }}
