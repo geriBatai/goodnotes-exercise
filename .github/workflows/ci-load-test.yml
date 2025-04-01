@@ -58,12 +58,9 @@ jobs:
 
       - name: App check
         shell: bash
-        run: |
-          echo "Foo:"
-          curl -o - -H "Host: foo.local" -d "hello=foo" http://127.0.0.1
-          echo ""
-          echo "Bar:"
-          curl -o - -H "Host: bar.local" -d "hello=bar" http://127.0.0.1
+        uses: ./.github/actions/ingress-ready
+        with:
+          endpoints: foo.local bar.local
 
 
 
