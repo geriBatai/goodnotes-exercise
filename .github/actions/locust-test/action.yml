@@ -17,10 +17,6 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
       run: |
         summary_file=/tmp/summary-${ENDPOINT##*/}.txt
-
-        echo "Test results for ${ENDPOINT}" > ${summary_file}
-        echo "```" >> ${summary_file}
         locust --only-summary --headless -f load-test/test.py -H ${ENDPOINT} 2>&1 | tee -a ${summary_file}
-        echo "```" >> ${summary_file}
 
-        python load-test/publish-comment.py --filename ${summary_file}
+        python load-test/publish.py --filename ${summary_file} --title "Test results for ${ENDPOINT}"

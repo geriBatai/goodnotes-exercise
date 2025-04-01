@@ -4,6 +4,7 @@ import requests
 import argparse
 import os
 import json
+import sys
 
 class GitHubCommentPost:
     def __init__(self, repo, token, pr_number):
@@ -12,14 +13,17 @@ class GitHubCommentPost:
         self.token = token
 
 
-    def post_comment(self, comment):
+    def post_comment(self, title, comment):
         """ Posts comment """
         headers = {
             "Authorization": f"Bearer {self.token}",
             "Accept": "application/vnd.github.v3+json"
         }
         data = {
-            "body": comment
+            "body": f"""
+            {title}
+            ```{comment}```
+            """
         }
         response = requests.post(self.url, headers=headers, json=data)
         return response.json()
@@ -27,6 +31,8 @@ class GitHubCommentPost:
 
 def get_pr_data():
     event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if event_path is None:
+        return None
 
     with open(event_path, "r") as f:
         event = json.load(f)
@@ -45,6 +51,7 @@ def get_pr_data():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("Send comment to GitHub PR")
     parser.add_argument("-f", "--filename", help="filename to the content of a comment to post")
+    parser.add_argument("-t", "--title", help="heading for a comment")
     args = parser.parse_args()
 
     token = os.environ.get("GITHUB_TOKEN")
@@ -58,9 +65,5 @@ if __name__ == '__main__':
         comment = f.read()
 
 
-    print(f"comment file: {args.filename}")
-    print(f"comment: {comment}")
-
-
     gh = GitHubCommentPost(pr["repo"], token, pr["pr_number"])
-    gh.post_comment(comment)
+    gh.post_comment(args.title, comment)

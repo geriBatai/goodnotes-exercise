@@ -1,5 +1,6 @@
 # GoodNotes exercise
 
+Repository for deploying and load testing http://foo.local and http://bar.local endpoints using GitHub actions.
 
 ## Work notes
 
