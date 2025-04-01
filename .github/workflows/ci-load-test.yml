@@ -22,3 +22,20 @@ jobs:
         shell: bash
         run: |
           kubectl get nodes -o wide
+
+      - name: Nginx controller install
+        uses: ./.github/actions/helm-install
+        with:
+          name: nginx
+          repository: nginx
+          repository-url: https://kubernetes.github.io/ingress-nginx
+          chart: ingress-nginx
+          namespace: ingress
+          values-file: cluster-setup/deploy/system/nginx-controller/values.yaml
+
+
+      - name: Nginx check
+        shell: bash
+        run: |
+          netstat -ntlp
+          curl -o - http://127.0.0.1/
