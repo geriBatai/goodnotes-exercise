@@ -45,7 +45,7 @@ jobs:
           name: foo
           chart: cluster-setup/charts/http-echo
           namespace: echo
-          values-file: cluster-setup/deploy/apps/foo/values.yaml
+          values-file: cluster-setup/deploy/app/foo/values.yaml
 
       - name: Bar install
         uses: ./.github/actions/helm-install
@@ -53,7 +53,7 @@ jobs:
           name: bar
           chart: cluster-setup/charts/http-echo
           namespace: echo
-          values-file: cluster-setup/deploy/apps/bar/values.yaml
+          values-file: cluster-setup/deploy/app/bar/values.yaml
 
 
       - name: App check
