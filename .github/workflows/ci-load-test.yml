@@ -44,6 +44,11 @@ jobs:
           namespace: echo
           values-file: cluster-setup/deploy/app/bar/values.yaml
 
+      - name: DNS Setup
+        uses: ./.github/actions/dns-loopback-setup
+        with:
+          hosts: foo.local bar.local
+
       - name: Ingress readiness check
         uses: ./.github/actions/ingress-ready
         with:

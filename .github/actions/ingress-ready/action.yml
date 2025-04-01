@@ -19,7 +19,7 @@ runs:
         time_elapsed=0
 
         for endpoint in ${ENDPOINTS}; do
-          until $(curl -o /dev/null -q -s -m 2 --fail --head -H "Host: $endpoint" http://127.0.0.1); do
+          until $(curl -o /dev/null -q -s -m 2 --fail --head $endpoint); do
             if [ ${time_elapsed} -ge ${TIMEOUT} ]; then
               echo "Timeout waiting for readiness"
               kubectl get all -n echo
