@@ -1,0 +1,24 @@
+name: CI Load Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Kubernetes setup
+      uses: helm/kind-action@v1
+      with:
+        config: cluster-setup/kind-config.yml
+
+    - name: Kubernetes check
+      shell: bash
+      run: |
+        kubectl get nodes -o wide
