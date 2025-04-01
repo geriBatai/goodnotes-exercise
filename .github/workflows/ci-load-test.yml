@@ -56,8 +56,7 @@ jobs:
           values-file: cluster-setup/deploy/app/bar/values.yaml
 
 
-      - name: App check
-        shell: bash
+      - name: Ingress readiness check
         uses: ./.github/actions/ingress-ready
         with:
           endpoints: foo.local bar.local
