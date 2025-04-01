@@ -33,9 +33,37 @@ jobs:
           namespace: ingress
           values-file: cluster-setup/deploy/system/nginx-controller/values.yaml
 
-
       - name: Nginx check
         shell: bash
         run: |
           netstat -ntlp
           curl -o - http://127.0.0.1/
+
+      - name: Foo install
+        uses: ./.github/actions/helm-install
+        with:
+          name: foo
+          chart: cluster-setup/charts/http-echo
+          namespace: echo
+          values-file: cluster-setup/deploy/apps/foo/values.yaml
+
+      - name: Bar install
+        uses: ./.github/actions/helm-install
+        with:
+          name: bar
+          chart: cluster-setup/charts/http-echo
+          namespace: echo
+          values-file: cluster-setup/deploy/apps/bar/values.yaml
+
+
+      - name: App check
+        shell: bash
+        run: |
+          echo "Foo:"
+          curl -o - -H "Host: foo.local" -d "hello=foo" http://127.0.0.1
+          echo ""
+          echo "Bar:"
+          curl -o - -H "Host: bar.local" -d "hello=bar" http://127.0.0.1
+
+
+

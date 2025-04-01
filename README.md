@@ -18,5 +18,6 @@ Plan:
   - Health checks. I could depend on helm tests and add container runs against ingress. But for this exercise I'll test end-to-end from the VM
   - DNS. I could install dnsmasq on host to setup ingress DNS, but for this exercise this is overkill. I'll just create a custom action that adds entries to /etc/hosts.
   - As I'm using helm, will helm create chart for http-echo service. Use it for both foo and bar. Maybe there is one already, but I don't need much out of it.
+  - I will install 1 pod for foo and 2 for bar. For tests.
   - For perftest I will use locust, just because it's more interesting. We could plugin in test_reporter and locust-csv-to-junite-xml to make test appear nicer. If we have time.
 
