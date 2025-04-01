@@ -18,11 +18,6 @@ jobs:
         with:
           config: cluster-setup/kind-config.yml
 
-      - name: Kubernetes check
-        shell: bash
-        run: |
-          kubectl get nodes -o wide
-
       - name: Nginx controller install
         uses: ./.github/actions/helm-install
         with:
@@ -32,12 +27,6 @@ jobs:
           chart: ingress-nginx
           namespace: ingress
           values-file: cluster-setup/deploy/system/nginx-controller/values.yaml
-
-      - name: Nginx check
-        shell: bash
-        run: |
-          netstat -ntlp
-          curl -o - http://127.0.0.1/
 
       - name: Foo install
         uses: ./.github/actions/helm-install
@@ -54,7 +43,6 @@ jobs:
           chart: cluster-setup/charts/http-echo
           namespace: echo
           values-file: cluster-setup/deploy/app/bar/values.yaml
-
 
       - name: Ingress readiness check
         uses: ./.github/actions/ingress-ready
