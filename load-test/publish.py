@@ -22,7 +22,7 @@ class GitHubCommentPost:
         data = {
             "body": f"""
             {title}
-            ```{comment}```
+            {comment}
             """
         }
         response = requests.post(self.url, headers=headers, json=data)
