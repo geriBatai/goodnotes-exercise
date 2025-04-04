@@ -1,0 +1,16 @@
+replicas: 1
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: foo.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+resources:
+  limits:
+    cpu: 100m
+    memory: 64M
+  requests:
+    cpu: 100m
+    memory: 64M

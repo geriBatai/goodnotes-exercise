@@ -1,0 +1,16 @@
+replicas: 2
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: bar.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+resources:
+  limits:
+    cpu: 100m
+    memory: 64M
+  requests:
+    cpu: 100m
+    memory: 64M

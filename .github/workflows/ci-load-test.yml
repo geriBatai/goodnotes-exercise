@@ -9,6 +9,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: write
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,7 +22,60 @@ jobs:
         with:
           config: cluster-setup/kind-config.yml
 
-      - name: Kubernetes check
-        shell: bash
-        run: |
-          kubectl get nodes -o wide
+      - name: Nginx controller install
+        uses: ./.github/actions/helm-install
+        with:
+          name: nginx
+          repository: nginx
+          repository-url: https://kubernetes.github.io/ingress-nginx
+          chart: ingress-nginx
+          namespace: ingress
+          values-file: cluster-setup/deploy/system/nginx-controller/values.yaml
+
+      - name: Foo install
+        uses: ./.github/actions/helm-install
+        with:
+          name: foo
+          chart: cluster-setup/charts/http-echo
+          namespace: echo
+          values-file: cluster-setup/deploy/app/foo/values.yaml
+
+      - name: Bar install
+        uses: ./.github/actions/helm-install
+        with:
+          name: bar
+          chart: cluster-setup/charts/http-echo
+          namespace: echo
+          values-file: cluster-setup/deploy/app/bar/values.yaml
+
+      - name: DNS Setup
+        uses: ./.github/actions/dns-loopback-setup
+        with:
+          hosts: foo.local bar.local
+
+      - name: Ingress readiness check
+        uses: ./.github/actions/ingress-ready
+        with:
+          endpoints: foo.local bar.local
+
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Locust setup
+        run: pip install -r load-test/requirements.txt
+
+      - name: Locust test foo.local
+        uses: ./.github/actions/locust-test
+        with:
+          endpoint: http://foo.local
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Locust test bar.local
+        uses: ./.github/actions/locust-test
+        with:
+          endpoint: http://bar.local
+          github_token: ${{ secrets.GITHUB_TOKEN }}
