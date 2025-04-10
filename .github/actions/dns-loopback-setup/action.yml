@@ -1,0 +1,19 @@
+name: DNS Loopback Setup
+description: Configures /etc/hosts with provided DNS entries
+inputs:
+  hosts:
+    required: true
+    description: Space separated list of hosts
+runs:
+  using: composite
+  steps:
+    - name: /etc/hosts entries
+      shell: bash
+      env:
+        HOSTS: ${{ inputs.hosts }}
+      run: |
+        for host in ${HOSTS}; do
+          if ! $(grep ${host} /etc/hosts >/dev/null); then
+            echo "127.0.0.1 ${host}" | sudo tee -a /etc/hosts
+          fi
+        done

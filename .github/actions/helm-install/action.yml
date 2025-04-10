@@ -1,0 +1,56 @@
+name: Helm
+description: Intall helm chart
+inputs:
+  chart:
+    description: Helm chart name
+    required: true
+  name:
+    description: Installation name
+    required: true
+  repository:
+    description: Chart repository
+    required: false
+  repository-url:
+    description: Chart repository URL
+    required: false
+  namespace:
+    description: Destination namespace
+    required: true
+  values-file:
+    description: Path to Helm values file
+    default: values.yaml
+
+runs:
+  using: composite
+  steps:
+    - name: Helm - check install
+      shell: bash
+      run: |
+        helm version || (echo "Helm not installed"; exit 1)
+
+    - name: Helm - add repository
+      if: ${{ inputs.repository != null }}
+      shell: bash
+      env:
+        REPOSITORY: ${{ inputs.repository }}
+        REPOSITORY_URL: ${{ inputs.repository-url }}
+      run: |
+        helm repo add ${REPOSITORY} ${REPOSITORY_URL}
+
+    - name: Helm - install
+      shell: bash
+      env:
+        NAME: ${{ inputs.name }}
+        NAMESPACE: ${{ inputs.namespace }}
+        CHART: ${{ inputs.chart }}
+        REPOSITORY: ${{ inputs.repository }}
+        REPOSITORY_URL: ${{ inputs.repository-url }}
+        VALUES_FILE: ${{ inputs.values-file }}
+      run: |
+        FULLCHART="${REPOSITORY}/${CHART}"
+        if [ -z "${REPOSITORY}" ];  then
+          FULLCHART=${CHART}
+        fi
+
+        helm -n ${NAMESPACE} install ${NAME} ${FULLCHART} --create-namespace -f ${VALUES_FILE} --wait
+        kubectl get all -n ${NAMESPACE}

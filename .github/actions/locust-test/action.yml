@@ -1,0 +1,22 @@
+name: Locust test run
+description: Performs locust test
+inputs:
+  endpoint:
+    description: endpoint to test
+    required: true
+  github_token:
+    description: GitHub PAT used to publish a comment
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        ENDPOINT: ${{ inputs.endpoint }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      run: |
+        summary_file=/tmp/summary-${ENDPOINT##*/}.txt
+        locust --only-summary --headless -f load-test/test.py -H ${ENDPOINT} 2>&1 | tee -a ${summary_file}
+
+        python load-test/publish.py --filename ${summary_file} --title "Test results for ${ENDPOINT}"

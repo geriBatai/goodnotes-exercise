@@ -1,0 +1,11 @@
+replicas: 1
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+tolerations:
+  - key: dedicated-node
+    operator: Equal
+    value: ingress
+    effect: NoExecute
